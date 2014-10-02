@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "keywords": [ "time", "ago", "i18n" ],
   "dependencies": {
-    "cristiandouce/moment": "develop"
+    "DemocraciaEnRed/moment": "develop"
   },
   "scripts": [
     "index.js"
