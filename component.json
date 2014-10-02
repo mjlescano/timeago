@@ -4,13 +4,13 @@
   "version": "0.0.1",
   "keywords": [ "time", "ago", "i18n" ],
   "dependencies": {
-    "DemocraciaEnRed/moment": "develop"
+    "DemocracyOS/moment": "develop"
   },
   "scripts": [
     "index.js"
   ],
   "main": "index.js",
   "development": {},
-  "repo": "cristiandouce/timeago",
+  "repo": "DemocracyOS/timeago",
   "license": "MIT"
 }
