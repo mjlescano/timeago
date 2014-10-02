@@ -30,7 +30,7 @@ function Timeago (selector, options) {
   this.timer = null;
 
   // setup language
-  moment.lang(this.lang);
+  moment.locale(this.lang);
 
   // init auto-render
   this.update()
