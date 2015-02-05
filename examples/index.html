@@ -16,7 +16,7 @@
         var timeago = require('timeago');
         el.setAttribute('data-time', new Date());
 
-        timeago('#now');
+        timeago('#now', { interval: 25 });
       })();
     </script>
   </section>
