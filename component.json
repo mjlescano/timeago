@@ -2,9 +2,14 @@
   "name": "timeago",
   "description": "Simple timeago component with moment.js i18n support.",
   "version": "0.0.1",
-  "keywords": [ "time", "ago", "i18n" ],
+  "keywords": [
+    "time",
+    "ago",
+    "i18n"
+  ],
   "dependencies": {
-    "DemocracyOS/moment": "develop"
+    "DemocracyOS/moment": "develop",
+    "component/raf": "^1.2.0"
   },
   "scripts": [
     "index.js"

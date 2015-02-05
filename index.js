@@ -3,6 +3,7 @@
  */
 
 var moment = require('moment')
+  , raf = require('raf')
   , half = 1000 * 30
   , o = document.querySelectorAll.bind(document);
 
@@ -45,16 +46,20 @@ function Timeago (selector, options) {
  */
 
 Timeago.prototype.update = function() {
+  var self = this;
+
   // if timer, delete it!
-  if(this.timer) {
-    clearTimeout(this.timer);
+  if (self.timer) {
+    clearTimeout(self.timer);
   }
 
-  // Update all matching elements with `Timeago` string.
-  toArray(o(this.selector)).forEach(updateElement.bind(this));
+  raf(function() {
+    // Update all matching elements with `Timeago` string.
+    toArray(o(self.selector)).forEach(updateElement.bind(self));
 
-  // Save timer's id for next update.
-  this.timer = setTimeout(this.update.bind(this), this.interval);
+    // Save timer's id for next update.
+    self.timer = setTimeout(self.update.bind(self), self.interval);
+  })
 }
 
 /**
