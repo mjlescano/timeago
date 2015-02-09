@@ -2,72 +2,110 @@
  * Module dependencies.
  */
 
-var moment = require('moment')
-  , half = 1000 * 30
-  , o = document.querySelectorAll.bind(document);
+var moment = require('moment')();
+var half = 1000 * 30;
+var elements = [];
+var timer = null;
 
-module.exports = Timeago;
-
-/**
- * Returns a timea
- */
-
-function Timeago (selector, options) {
-  if (!(this instanceof Timeago)) {
-    return new Timeago(selector, options);
-  }
-
-  if (0 === arguments.length) {
-    throw new Error("Timeago requires at least a query selector string as parameter.");
-  };
-
-  this.selector = selector;
-
-  options = options || {};
-  this.interval = options.interval || half; // a minute
-  this.lang = options.lang || 'en';
-  this.attr = options.attr || 'data-time';
-  this.timer = null;
-
-  // setup language
-  moment.locale(this.lang);
-
-  // init auto-render
-  this.update()
+var options = {
+  interval: half,
+  lang: 'en',
+  attr: 'data-time'
 }
 
+moment.locale(options.lang)
+
+var Timeago = module.exports = {};
+
 /**
- * Updates all matching elements
- * with selector provided
+ * Function to remove elements from the timeago update() iteration
  *
- * @return {Timeago} `Timeago` instance.
+ * @param {Hash} of options to everride the current ones
+ * @return {Timeago} `Timeago`.
  * @api public
  */
-
-Timeago.prototype.update = function() {
-  // if timer, delete it!
-  if(this.timer) {
-    clearTimeout(this.timer);
+Timeago.config = function(o) {
+  if (!o) return Timeago;
+  if ('number' === typeof o.interval) options.interval = o.interval;
+  if ('string' === typeof o.lang) {
+    options.lang = o.lang;
+    // Configure moment locale only for this instance, not globally.
+    moment.locale(options.lang)
   }
-
-  // Update all matching elements with `Timeago` string.
-  toArray(o(this.selector)).forEach(updateElement.bind(this));
-
-  // Save timer's id for next update.
-  this.timer = setTimeout(this.update.bind(this), this.interval);
+  if ('string' === typeof o.attr) options.attr = o.attr;
 }
 
 /**
- * Takes a NodeList Object and
- * returns an array
+ * Function to add elements to the timeago update() iteration
  *
- * @param {NodeList} list `NodeList` to convert
- * @return {Arrat} `Array` of `ElementNodes`
+ * @param {Element, NodeList, Array of Elements} to be added to the iteration
+ * @return {Timeago} `Timeago`.
+ * @api public
+ */
+Timeago.add = function(els) {
+  els = toArrayOfEls(els);
+
+  elements.concat(els);
+
+  return Timeago.update();
+}
+
+/**
+ * Function to remove elements from the timeago update() iteration
+ *
+ * @param {Element, NodeList, Array of Elements} to be added to the iteration
+ * @return {Timeago} `Timeago`.
+ * @api public
+ */
+Timeago.remove = function(els) {
+  els = toArrayOfEls(els);
+
+  for (var i = 0, l = els.length; i < l; ++i) {
+    var el = els[i];
+    var index = elements.indexOf(el);
+    if (index > -1) elements.splice(index, 1);
+  }
+
+  return Timeago.update();
+}
+
+/**
+ * Updates all the elements
+ * that where added.
+ *
+ * @return {Timeago} `Timeago`.
+ * @api public
+ */
+Timeago.update = function() {
+  // if timer, delete it!
+  if (timer) {
+    clearTimeout(timer);
+  }
+
+  // Update all elements with `Timeago` string.
+  for (var i = 0, l = elements.length; i < l; ++i) {
+    updateElement(elements[i]);
+  }
+
+  // Save timer's id for next update.
+  if (options.interval) {
+    timer = setTimeout(Timeago.update, options.interval);
+  }
+
+  return Timeago
+}
+
+/**
+ * Makes sure the element(s) is an Array of elements.
+ *
+ * @param {Element, NodeList, Array of Elements} to be converted to array.
+ * @return {Array} of elements
  * @api private
  */
-
-function toArray (list) {
-  return Array.prototype.concat.apply([], list);
+function toArrayOfEls(els) {
+  if (els instanceof NodeList) els = Array.prototype.slice.call(els);
+  if ('undefined' === typeof els.length) els = [els];
+  return els;
 }
 
 /**
